@@ -78,9 +78,9 @@ defmodule Populate do
     populate([{type, [count: count]} | rest], mod_fun, acc)
   end
 
-  defp populate([{type, opts} | rest], {mod, fun} = mod_fun, acc) do
-    {%{key: key, count: count, all: all, each: each}, opts} =
-    extract_opts(type, opts)
+  defp populate([{name, opts} | rest], {mod, fun} = mod_fun, acc) do
+    {%{type: type, count: count, all: all, each: each}, opts} =
+      extract_opts(name, opts)
 
     # If the all spec is passed in, populate it and merge it with the
     # create options
@@ -88,14 +88,14 @@ defmodule Populate do
 
     items = fn ->
               opts = Dict.merge(opts, populate(each, mod_fun))
-              apply(mod, fun, [key, Enum.into(opts, %{})])
+              apply(mod, fun, [type, Enum.into(opts, %{})])
             end
       |> Stream.repeatedly
       |> Enum.take(count)
 
     # If there is only 1 item (count == 1), unwrap it from the list
     items = if length(items) == 1, do: hd(items), else: items
-    populate(rest, mod_fun, [{type, items} | acc])
+    populate(rest, mod_fun, [{name, items} | acc])
   end
 
 
@@ -103,11 +103,11 @@ defmodule Populate do
   @spec extract_opts(Populate.type, Dict.t) :: {Dict.t, Dict.t}
   defp extract_opts(type, opts) do
     # Extract and return options
-    {key, opts}   = Dict.pop(opts, :key, type)
+    {type, opts}   = Dict.pop(opts, :type, type)
     {count, opts} = Dict.pop(opts, :count, 1)
     {all, opts}   = Dict.pop(opts, :all, [])
     {each, opts}  = Dict.pop(opts, :each, [])
-    {%{key: key, count: count, all: all, each: each}, opts}
+    {%{type: type, count: count, all: all, each: each}, opts}
   end
 
 end

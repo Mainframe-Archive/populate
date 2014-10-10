@@ -29,9 +29,9 @@ defmodule PopulateTest do
     for tadpole <- tadpoles, do: assert tadpole == {:tadpole, :normal}
   end
 
-  @tag populace: [frogs: [key: :frog,
+  @tag populace: [frogs: [type: :frog,
                           count: 2,
-                          each: [tadpoles: [key: :tadpole,
+                          each: [tadpoles: [type: :tadpole,
                                             count: 5,
                                             mutant: true]],
                           all: [:pond]]]

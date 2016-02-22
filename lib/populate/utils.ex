@@ -9,7 +9,7 @@ defmodule Populate.Utils do
   NB: This is fixed between erlang VM runs -- for different random values,
   this must be called.
   """
-  def reseed(seed \\ :erlang.now) do
+  def reseed(seed \\ :erlang.timestamp) do
     :random.seed(seed)
   end
 
